@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use crate::normalize::normalize;
 
-
 pub struct Vocab {
     vectors: HashMap<String, Vec<f32>>,
     dim: usize,
@@ -9,51 +8,39 @@ pub struct Vocab {
 
 impl Vocab {
     pub fn new(dim: usize) -> Self {
-        Self {
-            vectors: HashMap::new(),
-            dim,
-        }
+        Self { vectors: HashMap::new(), dim }
     }
 
     fn random_vec(&self, word: &str) -> Vec<f32> {
         let mut hash: u32 = 2166136261;
-
         for b in word.bytes() {
             hash ^= b as u32;
             hash = hash.wrapping_mul(16777619);
         }
 
-        let mut vec = Vec::with_capacity(self.dim);
         let mut seed = hash;
-
-        for _ in 0..self.dim {
+        (0..self.dim).map(|_| {
             seed ^= seed << 13;
             seed ^= seed >> 17;
             seed ^= seed << 5;
-
-            let val = (seed as f32 / u32::MAX as f32) - 0.5;
-            vec.push(val);
-        }
-
-        vec
+            (seed as f32 / u32::MAX as f32) - 0.5
+        }).collect()
     }
 
     pub fn word_vec(&mut self, word: &str) -> Vec<f32> {
         if let Some(v) = self.vectors.get(word) {
             return v.clone();
         }
-
         let v = self.random_vec(word);
         self.vectors.insert(word.to_string(), v.clone());
         v
     }
 
     pub fn sentence_vec(&mut self, text: &str) -> Vec<f32> {
-        let normalized = normalize(text);
-        let words: Vec<&str> = normalized.split_whitespace().collect();
+        let norm = normalize(text);
+        let words: Vec<&str> = norm.split_whitespace().collect();
 
         let mut sum = vec![0.0; self.dim];
-
         for w in &words {
             let v = self.word_vec(w);
             for i in 0..self.dim {

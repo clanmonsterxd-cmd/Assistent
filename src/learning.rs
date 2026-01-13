@@ -1,9 +1,8 @@
 use crate::intent::Intent;
 use crate::classifier::IntentSample;
 use crate::vector::Vocab;
-
-use std::fs;
 use serde::{Serialize, Deserialize};
+use std::fs;
 
 const FILE: &str = "learned_samples.json";
 
@@ -56,5 +55,4 @@ impl LearningStore {
             }
         }
     }
-
 }
