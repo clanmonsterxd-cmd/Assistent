@@ -5,5 +5,9 @@ pub enum Intent {
     Greeting,
     Weather,
     Search,
+    FileOpen,      // Neue Intents
+    FileShow,
+    Goodbye,       // Fenster schließen, aber weiter laufen
+    Shutdown,      // Komplett beenden
     Unknown,
 }
