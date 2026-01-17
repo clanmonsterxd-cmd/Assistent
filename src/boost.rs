@@ -5,9 +5,10 @@ pub fn intent_boost(intent: &Intent, text: &str) -> f32 {
 
     match intent {
         Intent::Greeting => {
-            // Reduziere Greeting bei Fragen
-            if t.contains("?") || t.contains("was ist") || t.contains("wer ist") {
-                0.3  // Stark reduzieren bei Fragen
+            // Reduziere Greeting bei Fragen oder Befehlen
+            if t.contains("?") || t.contains("was ist") || t.contains("wer ist") 
+                || t.contains("zeig") || t.contains("öffne") || t.contains("starte") {
+                0.3  // Stark reduzieren bei Fragen/Befehlen
             } else if t.contains("hallo") || t.contains("hi") || t.contains("hey") || t.contains("guten") {
                 1.5
             } else {
@@ -53,8 +54,8 @@ pub fn intent_boost(intent: &Intent, text: &str) -> f32 {
             }
         }
         Intent::FileShow => {
-            if t.contains("zeig") || t.contains("wo ist") || t.contains("finde datei") {
-                1.4
+            if t.contains("zeig") || t.contains("wo ist") || t.contains("finde datei") || t.contains("mir") {
+                1.5  // Erhöht von 1.4
             } else {
                 1.0
             }

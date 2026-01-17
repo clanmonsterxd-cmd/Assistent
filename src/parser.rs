@@ -8,6 +8,7 @@ pub fn extract_search_query(input: &str) -> String {
     let stopwords = [
         "suche nach ", "suche ", "finde ", "finde informationen ",
         "informationen über ", "über ", "recherchiere ",
+        "was ist ein ", "was ist eine ", "was ist der ", "was ist die ", "was ist das ",
         "was ist ", "wer ist ", "erkläre mir ", "erkläre ",
     ];
     
@@ -46,7 +47,9 @@ pub fn extract_location(input: &str) -> Option<String> {
                 .join(" ");
             
             if !location.is_empty() {
-                return Some(location.trim().to_string());
+                // Entferne Satzzeichen am Ende
+                let clean = location.trim_end_matches(&['.', '?', '!', ',']);
+                return Some(clean.trim().to_string());
             }
         }
     }
@@ -58,16 +61,18 @@ pub fn extract_location(input: &str) -> Option<String> {
 pub fn extract_file_path(input: &str) -> String {
     let t = input.to_lowercase();
     
-    // Suche nach typischen Mustern
+    // Suche nach typischen Mustern - längste zuerst!
     let markers = [
-        ("öffne ", ""),
-        ("zeige ", ""),
-        ("zeig ", ""),
-        ("starte ", ""),
-        ("start ", ""),
+        "zeige mir ",
+        "zeig mir ",
+        "öffne ",
+        "zeige ",
+        "zeig ",
+        "starte ",
+        "start ",
     ];
     
-    for (marker, _) in markers {
+    for marker in markers {
         if let Some(pos) = t.find(marker) {
             let after = &input[pos + marker.len()..];
             return after.trim().to_string();
